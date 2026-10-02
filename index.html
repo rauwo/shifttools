@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shift Tools</title>
+  <meta name="theme-color" content="#1f6f5c">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>Shift Tools</h1>
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="reconcile" aria-selected="true">Reconcile</button>
+      <button role="tab" data-tab="handover" aria-selected="false">Handover</button>
+      <button role="tab" data-tab="settings" aria-selected="false">Settings</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ============ RECONCILE ============ -->
+    <section id="tab-reconcile" class="tab-panel" role="tabpanel">
+      <div class="panel-head">
+        <div>
+          <h2>EPOS vs PDF</h2>
+          <p class="muted">Enter each EPOS and PDF figure. Press <kbd>Enter</kbd> to add another line. Every type must match to the penny.</p>
+        </div>
+        <button id="recon-clear" class="btn ghost">Clear all</button>
+      </div>
+
+      <div id="recon-cards" class="recon-grid"></div>
+
+      <div class="card summary">
+        <h3>Summary</h3>
+        <table class="summary-table">
+          <thead><tr><th></th><th>EPOS</th><th>PDF</th><th>Difference</th><th></th></tr></thead>
+          <tbody id="recon-summary"></tbody>
+        </table>
+        <div id="recon-overall" class="overall"></div>
+        <div class="actions">
+          <button id="recon-copy" class="btn ghost">Copy summary</button>
+          <button id="recon-to-handover" class="btn">Use in handover email →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HANDOVER ============ -->
+    <section id="tab-handover" class="tab-panel" role="tabpanel" hidden>
+      <div class="handover-layout">
+        <div class="card">
+          <h2>Handover email</h2>
+          <div class="form-grid">
+            <label>Room
+              <select id="ho-room"></select>
+            </label>
+            <label>Shift
+              <input id="ho-shift" list="shift-options" placeholder="e.g. AM">
+              <datalist id="shift-options">
+                <option value="AM"><option value="PM"><option value="Night"><option value="Lunch"><option value="Dinner">
+              </datalist>
+            </label>
+            <label>Date
+              <input id="ho-date" type="date">
+            </label>
+            <label>Your name
+              <input id="ho-name" placeholder="Your name">
+            </label>
+            <label class="span-2">To
+              <input id="ho-to" placeholder="manager@example.com; team@example.com">
+            </label>
+            <label class="span-2">CC
+              <input id="ho-cc" placeholder="optional">
+            </label>
+            <label class="span-2">Subject
+              <input id="ho-subject">
+            </label>
+            <label>Sign-in
+              <select id="ho-greeting"></select>
+            </label>
+            <label>Sign-off
+              <select id="ho-signoff"></select>
+            </label>
+          </div>
+
+          <div class="starters-head">
+            <h3>Sentence starters <span class="muted" id="ho-starters-room"></span></h3>
+            <span class="muted small">Tap to add to your notes</span>
+          </div>
+          <div id="ho-starters" class="chips"></div>
+
+          <label>Notes
+            <textarea id="ho-notes" rows="10" placeholder="Write your handover here…"></textarea>
+          </label>
+
+          <label class="check">
+            <input type="checkbox" id="ho-include-recon"> Include takings reconciliation
+          </label>
+        </div>
+
+        <div class="card preview-card">
+          <h3>Preview</h3>
+          <div class="preview-subject"><span class="muted">Subject:</span> <strong id="pv-subject"></strong></div>
+          <pre id="pv-body" class="preview-body"></pre>
+          <div class="actions">
+            <button id="ho-send" class="btn">Open in email app</button>
+            <button id="ho-copy" class="btn ghost">Copy email</button>
+            <button id="ho-clear" class="btn ghost">Clear notes</button>
+          </div>
+          <p id="ho-msg" class="muted small" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SETTINGS ============ -->
+    <section id="tab-settings" class="tab-panel" role="tabpanel" hidden>
+      <div class="card">
+        <h2>General</h2>
+        <div class="form-grid">
+          <label>Default name
+            <input id="set-name" placeholder="Used for {name}">
+          </label>
+          <label>Currency symbol
+            <input id="set-currency" maxlength="3">
+          </label>
+        </div>
+        <p class="muted small">Placeholders you can use in subjects, sign-ins and sign-offs:
+          <code>{name}</code> <code>{room}</code> <code>{shift}</code> <code>{date}</code> <code>{day}</code></p>
+      </div>
+
+      <div class="card">
+        <div class="panel-head">
+          <h2>Rooms &amp; sentence starters</h2>
+          <button id="add-room" class="btn ghost">+ Add room</button>
+        </div>
+        <div id="rooms-list" class="stack"></div>
+      </div>
+
+      <div class="card">
+        <div class="panel-head">
+          <h2>Sign-ins</h2>
+          <button id="add-greeting" class="btn ghost">+ Add sign-in</button>
+        </div>
+        <div id="greetings-list" class="stack"></div>
+      </div>
+
+      <div class="card">
+        <div class="panel-head">
+          <h2>Sign-offs / signatures</h2>
+          <button id="add-signoff" class="btn ghost">+ Add sign-off</button>
+        </div>
+        <div id="signoffs-list" class="stack"></div>
+      </div>
+
+      <div class="card">
+        <h2>Backup</h2>
+        <p class="muted small">Settings are saved in this browser. Export them to move to another device.</p>
+        <div class="actions">
+          <button id="export-settings" class="btn ghost">Export settings</button>
+          <label class="btn ghost file-btn">Import settings<input id="import-settings" type="file" accept="application/json,.json" hidden></label>
+          <button id="reset-settings" class="btn danger">Reset to defaults</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <script src="calc.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

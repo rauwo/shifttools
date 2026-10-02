@@ -1,0 +1,10 @@
+{
+  "name": "shifttools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "EPOS vs PDF takings reconciliation and handover email builder",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "start": "npx --yes serve -l 8080 ."
+  }
+}
